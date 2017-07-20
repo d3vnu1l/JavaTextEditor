@@ -46,7 +46,7 @@ public class UI extends JFrame implements ActionListener {
     private final JComboBox fontSize, fontType;
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
     private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
-            aboutMe, aboutSoftware, wordWrap;
+            aboutMe, aboutSoftware, wordWrap, fontSettings, size, font;
     //private final JToolBar mainToolbar;
     //Button newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton;
     private final Action selectAllAction;
@@ -137,12 +137,9 @@ public class UI extends JFrame implements ActionListener {
         menuBar.add(menuEdit);
         menuBar.add(menuFind);
         menuBar.add(menuAbout);
-
-
-
         this.setJMenuBar(menuBar);
         
-        // Add status bar
+
         JPanel statusPanel = new JPanel();
         statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         getContentPane().add(statusPanel, BorderLayout.SOUTH);
@@ -171,15 +168,13 @@ public class UI extends JFrame implements ActionListener {
         getContentPane().setVisible(true);
 
         // Set Actions:
-        selectAllAction = new SelectAllAction("Select All", clearIcon, "Select all text", new Integer(KeyEvent.VK_A),
-                textArea);
-
+        selectAllAction = new SelectAllAction("Select All", clearIcon, "Select all text", new Integer(KeyEvent.VK_A),textArea);
         this.setJMenuBar(menuBar);
 
         // New File
         newFile.addActionListener(this);  // Adding an action listener (so we know when it's been clicked).
         newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)); // Set a keyboard shortcut
-        menuFile.add(newFile); // Adding the file menu
+        menuFile.add(newFile); // Adding the fileAnother item menu
 
         // Open File
         openFile.addActionListener(this);
@@ -268,7 +263,17 @@ public class UI extends JFrame implements ActionListener {
         paste.setToolTipText("Paste");
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
         menuEdit.add(paste);
-
+        
+        //Font Text
+        fontSettings = new JMenu("Font Settings");
+        //fontSettings.setMnemonic(KeyEvent.VK_S);
+        size = new JMenuItem("Size");
+        //size.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
+        fontSettings.add(size);
+        font = new JMenuItem("Font");
+        fontSettings.add(font);
+        menuEdit.add(fontSettings);
+        
         // Find Word
         quickFind.addActionListener(this);
         quickFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
@@ -284,70 +289,13 @@ public class UI extends JFrame implements ActionListener {
         aboutSoftware.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
         menuAbout.add(aboutSoftware);
 
-        /*
-        mainToolbar = new JToolBar();
-        this.add(mainToolbar, BorderLayout.NORTH);
-        // used to create space between button groups
-        Border emptyBorder = BorderFactory.createEmptyBorder(0, 0, 0, 50);
 
-        newButton = new JButton(newIcon);
-        newButton.setToolTipText("New");
-        newButton.addActionListener(this);
-        mainToolbar.add(newButton);
-        mainToolbar.addSeparator();
-
-        openButton = new JButton(openIcon);
-        openButton.setToolTipText("Open");
-        openButton.addActionListener(this);
-        mainToolbar.add(openButton);
-        mainToolbar.addSeparator();
-
-        saveButton = new JButton(saveIcon);
-        saveButton.setToolTipText("Save");
-        saveButton.addActionListener(this);
-        mainToolbar.add(saveButton);
-        mainToolbar.addSeparator();
-
-        clearButton = new JButton(clearIcon);
-        clearButton.setToolTipText("Clear All");
-        clearButton.addActionListener(this);
-        mainToolbar.add(clearButton);
-        mainToolbar.addSeparator();
-
-        quickButton = new JButton(searchIcon);
-        quickButton.setToolTipText("Quick Search");
-        quickButton.addActionListener(this);
-        mainToolbar.add(quickButton);
-        mainToolbar.addSeparator();
-
-
-        aboutMeButton = new JButton(aboutMeIcon);
-        aboutMeButton.setToolTipText("About Me");
-        aboutMeButton.addActionListener(this);
-        mainToolbar.add(aboutMeButton);
-        mainToolbar.addSeparator();
-
-        aboutButton = new JButton(aboutIcon);
-        aboutButton.setToolTipText("About NotePad PH");
-        aboutButton.addActionListener(this);
-        mainToolbar.add(aboutButton);
-        mainToolbar.addSeparator();
-
-
-        closeButton = new JButton(closeIcon);
-        closeButton.setToolTipText("Quit");
-        closeButton.addActionListener(this);
-        mainToolbar.add(closeButton);
-        mainToolbar.addSeparator();
-        */
-
-  /****************** FONT SETTINGS SECTION ***********************/
+  /****************** FONT SETTINGS SECTION **********************Another item*/
 
         //FONT FAMILY SETTINGS SECTION START
-
         fontType = new JComboBox();
 
-          //GETTING ALL AVAILABLE FONT FOMILY NAMES
+          //GETTING ALL AVAILABLAnother itemE FONT FOMILY NAMES
         String [] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
         for (int i = 0; i < fonts.length; i++)
@@ -356,10 +304,11 @@ public class UI extends JFrame implements ActionListener {
              fontType.addItem ( fonts [i] );
         }
         //Setting maximize size of the fontType ComboBox
-        fontType.setMaximumSize( new Dimension ( 170, 30 ));
-        //mainToolbar.add( fontType );
+        fontType.setMaximumSize( new Dimension ( 170, 20 ));
+        menuBar.add(Box.createHorizontalGlue());	//pad to the right
+        menuBar.add(fontType);
         //cursorPosLabel.mainToolbar.addSeparator();
-
+      
         //Adding Action Listener on fontType JComboBox
 
         fontType.addActionListener(new ActionListener()
@@ -373,20 +322,18 @@ public class UI extends JFrame implements ActionListener {
                     textArea.setFont( new Font( p, Font.PLAIN, s));
                 }
         });
-
         //FONT FAMILY SETTINGS SECTION END
 
 
         //FONT SIZE SETTINGS START
-
         fontSize = new JComboBox();
 
             for( int i = 5 ; i <= 100 ; i++)
             {
                 fontSize.addItem( i );
             }
-        fontSize.setMaximumSize( new Dimension( 70,30 ));
-        //mainToolbar.add( fontSize );
+        fontSize.setMaximumSize( new Dimension( 70,20 ));
+        menuBar.add( fontSize );
 
         fontSize.addActionListener(new ActionListener()
         {

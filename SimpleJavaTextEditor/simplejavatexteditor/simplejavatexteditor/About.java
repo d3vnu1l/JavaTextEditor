@@ -42,13 +42,16 @@ public class About {
 
         contentText =
         "<html><body><p>" +
-        "Author: Pierre-Henry Soria<br />" +
+        "Original Author: Pierre-Henry Soria<br />" +
         "Contact me at: " +
-        "<a href='mailto:" + SimpleJavaTextEditor.AUTHOR_EMAIL + "?subject=About the NotePad PH Software'>" + SimpleJavaTextEditor.AUTHOR_EMAIL + "</a>" +
+        "<a href='mailto:" + SimpleJavaTextEditor.ORIGINAL_AUTHOR_EMAIL + "?subject=About the NotePad PH Software'>" + SimpleJavaTextEditor.ORIGINAL_AUTHOR_EMAIL + "</a>" +
                 "<br /><br />" +
                 "Modified By: Achintha Gunasekara<br />" +
+                "Contact me at: <a href='mailto:" + SimpleJavaTextEditor.ORIGINAL_EDITOR_EMAIL + "?subject=About the NotePad PH Software'>" + SimpleJavaTextEditor.ORIGINAL_EDITOR_EMAIL + "</a>" +
+                "<br /><br />" +
+                "Forked By: Ryan Deushane<br />" +
                 "Contact me at: <a href='mailto:" + SimpleJavaTextEditor.EDITOR_EMAIL + "?subject=About the NotePad PH Software'>" + SimpleJavaTextEditor.EDITOR_EMAIL + "</a>" +
-        "</p></body></html>";
+                "</p></body></html>";
 
         text.setText(contentText);
         panel.add(text);
