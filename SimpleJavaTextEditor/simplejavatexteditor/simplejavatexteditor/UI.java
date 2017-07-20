@@ -357,8 +357,8 @@ public class UI extends JFrame implements ActionListener {
         }
         //Setting maximize size of the fontType ComboBox
         fontType.setMaximumSize( new Dimension ( 170, 30 ));
-        mainToolbar.add( fontType );
-        mainToolbar.addSeparator();
+        //mainToolbar.add( fontType );
+        //cursorPosLabel.mainToolbar.addSeparator();
 
         //Adding Action Listener on fontType JComboBox
 
@@ -386,7 +386,7 @@ public class UI extends JFrame implements ActionListener {
                 fontSize.addItem( i );
             }
         fontSize.setMaximumSize( new Dimension( 70,30 ));
-        mainToolbar.add( fontSize );
+        //mainToolbar.add( fontSize );
 
         fontSize.addActionListener(new ActionListener()
         {
@@ -413,16 +413,16 @@ public class UI extends JFrame implements ActionListener {
 
     public void actionPerformed (ActionEvent e) {
         // If the source of the event was our "close" option
-        if (e.getSource() == close || e.getSource() == closeButton) {
+        if (e.getSource() == close) {
             this.dispose(); // dispose all resources and close the application
         }
         // If the source was the "new" file option
-        else if (e.getSource() == newFile || e.getSource() == newButton) {
+        else if (e.getSource() == newFile) {
             FEdit.clear(textArea);
         }
 
         // If the source was the "open" option
-        else if (e.getSource() == openFile || e.getSource() == openButton) {
+        else if (e.getSource() == openFile) {
             JFileChooser open = new JFileChooser(); // open up a file chooser (a dialog for the user to  browse files to open)
             int option = open.showOpenDialog(this); // get the option that the user selected (approve or cancel)
 
@@ -446,7 +446,7 @@ public class UI extends JFrame implements ActionListener {
             }
         }
         // If the source of the event was the "save" option
-        else if (e.getSource() == saveFile || e.getSource() == saveButton) {
+        else if (e.getSource() == saveFile) {
             // Open a file chooser
             JFileChooser fileChoose = new JFileChooser();
             // Open the file, only this time we call
@@ -514,20 +514,20 @@ public class UI extends JFrame implements ActionListener {
         }
 
         // Clear File (Code)
-        if (e.getSource() == clearFile || e.getSource() == clearButton) {
+        if (e.getSource() == clearFile) {
             FEdit.clear(textArea);
         }
         // Find
-        if (e.getSource() == quickFind || e.getSource() == quickButton) {
+        if (e.getSource() == quickFind) {
             new Find(textArea);
         }
 
         // About Me
-        else if (e.getSource() == aboutMe || e.getSource() == aboutMeButton) {
+        else if (e.getSource() == aboutMe) {
             new About().me();
         }
         // About Software
-        else if (e.getSource() == aboutSoftware || e.getSource() == aboutButton) {
+        else if (e.getSource() == aboutSoftware) {
             new About().software();
         }
 
