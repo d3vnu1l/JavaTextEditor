@@ -35,6 +35,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.border.BevelBorder;
 
 public class UI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
@@ -96,12 +97,14 @@ public class UI extends JFrame implements ActionListener {
         textArea.setFont(new Font("Century Gothic", Font.BOLD, 12));
         textArea.setTabSize(2);
 
+
         /* SETTING BY DEFAULT WORD WRAP ENABLED OR TRUE */
         textArea.setLineWrap(true);
 
         // This is why we didn't have to worry about the size of the TextArea!
         getContentPane().setLayout(new BorderLayout()); // the BorderLayout bit makes it fill it automatically
         getContentPane().add(textArea);
+
 
         // Set the Menus
         menuFile = new JMenu("File");
@@ -131,6 +134,24 @@ public class UI extends JFrame implements ActionListener {
 
 
         this.setJMenuBar(menuBar);
+        
+        // Add status bar
+        JPanel statusPanel = new JPanel();
+        statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        getContentPane().add(statusPanel, BorderLayout.SOUTH);
+        statusPanel.setPreferredSize(new Dimension(getContentPane().getWidth(), 16));
+        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+       
+        //populate entries
+        Box statusBox;
+        statusBox = Box.createHorizontalBox();
+        statusBox.add(new JLabel("Left"));
+        statusBox.add(Box.createGlue());
+        statusBox.add(new JLabel("Middle"));
+        statusBox.add(Box.createGlue());
+        statusBox.add(new JLabel("Right"));
+        statusPanel.add(statusBox);
+        getContentPane().setVisible(true);
 
         // Set Actions:
         selectAllAction = new SelectAllAction("Select All", clearIcon, "Select all text", new Integer(KeyEvent.VK_A),
