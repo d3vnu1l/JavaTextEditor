@@ -41,13 +41,14 @@ public class UI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private final Container container;
     private final JTextArea textArea;
+    private final JScrollPane scrolll;
     private final JMenuBar menuBar;
     private final JComboBox fontSize, fontType;
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
     private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
             aboutMe, aboutSoftware, wordWrap;
-    private final JToolBar mainToolbar;
-    JButton newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton;
+    //private final JToolBar mainToolbar;
+    //Button newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton;
     private final Action selectAllAction;
 
 
@@ -96,14 +97,21 @@ public class UI extends JFrame implements ActionListener {
         textArea.setTabSize(2);
         textArea.setFont(new Font("Century Gothic", Font.BOLD, 12));
         textArea.setTabSize(2);
-
-
+     
+        // Set up scroll bar
+        scrolll = new JScrollPane(textArea);
+        scrolll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrolll.setPreferredSize(new Dimension(250, 145));
+        scrolll.setMinimumSize(new Dimension(10, 10));
+        
+        
+        
         /* SETTING BY DEFAULT WORD WRAP ENABLED OR TRUE */
         textArea.setLineWrap(true);
 
         // This is why we didn't have to worry about the size of the TextArea!
         getContentPane().setLayout(new BorderLayout()); // the BorderLayout bit makes it fill it automatically
-        getContentPane().add(textArea);
+        getContentPane().add(scrolll);
 
 
         // Set the Menus
@@ -128,7 +136,6 @@ public class UI extends JFrame implements ActionListener {
         menuBar.add(menuFile);
         menuBar.add(menuEdit);
         menuBar.add(menuFind);
-
         menuBar.add(menuAbout);
 
 
@@ -139,17 +146,27 @@ public class UI extends JFrame implements ActionListener {
         JPanel statusPanel = new JPanel();
         statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         getContentPane().add(statusPanel, BorderLayout.SOUTH);
-        statusPanel.setPreferredSize(new Dimension(getContentPane().getWidth(), 16));
+        statusPanel.setPreferredSize(new Dimension(getContentPane().getWidth(), 19));
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
        
-        //populate entries
-        Box statusBox;
-        statusBox = Box.createHorizontalBox();
-        statusBox.add(new JLabel("Left"));
+        // Create box and populate entries
+        Box statusBox = Box.createHorizontalBox();
+        JLabel inputStatusLabel = new JLabel("--Insert--");
+        JLabel filenameLabel = new JLabel("Filename");
+        JLabel sourceTypeLabel = new JLabel("Plaintext Mode");
+        JLabel cursorPosLabel = new JLabel("X,Y");
+        JLabel scrolledPercentLabel = new JLabel("50%");
+        
+        // Add entries and set visible
+        statusBox.add(inputStatusLabel);
         statusBox.add(Box.createGlue());
-        statusBox.add(new JLabel("Middle"));
+        statusBox.add(filenameLabel);
         statusBox.add(Box.createGlue());
-        statusBox.add(new JLabel("Right"));
+        statusBox.add(sourceTypeLabel);
+        statusBox.add(Box.createGlue());
+        statusBox.add(cursorPosLabel);
+        statusBox.add(Box.createRigidArea(new Dimension(10,0)));
+        statusBox.add(scrolledPercentLabel);
         statusPanel.add(statusBox);
         getContentPane().setVisible(true);
 
@@ -267,6 +284,7 @@ public class UI extends JFrame implements ActionListener {
         aboutSoftware.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
         menuAbout.add(aboutSoftware);
 
+        /*
         mainToolbar = new JToolBar();
         this.add(mainToolbar, BorderLayout.NORTH);
         // used to create space between button groups
@@ -321,6 +339,7 @@ public class UI extends JFrame implements ActionListener {
         closeButton.addActionListener(this);
         mainToolbar.add(closeButton);
         mainToolbar.addSeparator();
+        */
 
   /****************** FONT SETTINGS SECTION ***********************/
 
