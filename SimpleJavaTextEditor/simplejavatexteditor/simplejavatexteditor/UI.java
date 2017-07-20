@@ -46,7 +46,7 @@ public class UI extends JFrame implements ActionListener {
     private final JComboBox fontSize, fontType;
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
     private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
-            aboutMe, aboutSoftware, wordWrap, fontSettings, size, font;
+            aboutMe, aboutSoftware, wordWrap, appearenceSettings, lightMode, darkMode;
     //private final JToolBar mainToolbar;
     //Button newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton;
     private final Action selectAllAction;
@@ -265,14 +265,14 @@ public class UI extends JFrame implements ActionListener {
         menuEdit.add(paste);
         
         //Font Text
-        fontSettings = new JMenu("Font Settings");
+        appearenceSettings = new JMenu("Appearence");
         //fontSettings.setMnemonic(KeyEvent.VK_S);
-        size = new JMenuItem("Size");
+        lightMode = new JMenuItem("Light");
         //size.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
-        fontSettings.add(size);
-        font = new JMenuItem("Font");
-        fontSettings.add(font);
-        menuEdit.add(fontSettings);
+        appearenceSettings.add(lightMode);
+        darkMode = new JMenuItem("Dark");
+        appearenceSettings.add(darkMode);
+        menuEdit.add(appearenceSettings);
         
         // Find Word
         quickFind.addActionListener(this);
