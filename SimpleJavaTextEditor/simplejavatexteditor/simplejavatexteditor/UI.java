@@ -46,7 +46,7 @@ public class UI extends JFrame implements ActionListener {
     private final JComboBox fontSize, fontType;
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
     private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
-            aboutMe, aboutSoftware, wordWrap, appearenceSettings, lightMode, darkMode;
+            aboutMe, aboutSoftware, appearenceSettings, lightMode, darkMode;
     //private final JToolBar mainToolbar;
     //Button newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton;
     private final Action selectAllAction;
@@ -65,7 +65,6 @@ public class UI extends JFrame implements ActionListener {
     private final ImageIcon copyIcon = new ImageIcon("icons/copy.png");
     private final ImageIcon pasteIcon = new ImageIcon("icons/paste.png");
     private final ImageIcon selectAllIcon = new ImageIcon("icons/selectall.png");
-    private final ImageIcon wordwrapIcon = new ImageIcon("icons/wordwrap.png");
 
     // setup icons - Search Menu
     private final ImageIcon searchIcon = new ImageIcon("icons/search.png");
@@ -220,33 +219,27 @@ public class UI extends JFrame implements ActionListener {
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
         menuEdit.add(cut);
 
-        // WordWrap
-        wordWrap = new JMenuItem();
-        wordWrap.setText("Word Wrap");
-        wordWrap.setIcon(wordwrapIcon);
-        wordWrap.setToolTipText("Word Wrap");
-
-        //Short cut key or key stroke
-        wordWrap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
-        menuEdit.add(wordWrap);
 
         /* CODE FOR WORD WRAP OPERATION
-         * BY DEFAULT WORD WRAPPING IS ENABLED.
+         * BY DEFAULT WORD WRAPPING IS **DISABLED**.
         */
+        textArea.setLineWrap(false);
+        /*
         wordWrap.addActionListener(new ActionListener()
         {
                 public void actionPerformed(ActionEvent ev) {
                     // If wrapping is false then after clicking on menuitem the word wrapping will be enabled
                     if(textArea.getLineWrap()==false) {
-                        /* Setting word wrapping to true */
+                         // Setting word wrapping to true 
                         textArea.setLineWrap(true);
                     } else {
                         // else  if wrapping is true then after clicking on menuitem the word wrapping will be disabled
-                        /* Setting word wrapping to false */
-                        textArea.setLineWrap(false);
+                        //  Setting word wrapping to false 
+                    	textArea.setLineWrap(false);
                 }
             }
         });
+        */
 
         // Copy Text
         copy = new JMenuItem(new DefaultEditorKit.CopyAction());
