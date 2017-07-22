@@ -18,7 +18,11 @@
 
 package simplejavatexteditor;
 
+import java.awt.event.KeyEvent;
+
+import javax.swing.JComponent;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 
 public class SimpleJavaTextEditor extends JTextPane {
 
@@ -34,6 +38,7 @@ public class SimpleJavaTextEditor extends JTextPane {
      */
     public static void main(String[] args) {
         new UI().setVisible(true);
+        
     }
 
 }

@@ -1,24 +1,3 @@
-/**
- * @name        Simple Java NotePad
- * @package     ph.notepad
- * @file        UI.java
- *
- * @author      Pierre-Henry Soria
- * @email       pierrehenrysoria@gmail.com
- * @link        http://github.com/pH-7
- *
- * @copyright   Copyright Pierre-Henry SORIA, All Rights Reserved.
- * @license     Apache (http://www.apache.org/licenses/LICENSE-2.0)
- * @create      2012-04-05
- * @update      2017-02-18
- *
- * @modifiedby  Achintha Gunasekara
- * @modemail    contact@achinthagunasekara.com
-*
- * @modifiedby  Marcus Redgrave-Close
- * @modemail    marcusrc1@hotmail.co.uk
- */
-
 package simplejavatexteditor;
 
 import javax.swing.*;
@@ -47,35 +26,10 @@ public class UI extends JFrame implements ActionListener {
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
     private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
             aboutMe, aboutSoftware, appearenceSettings, lightMode, darkMode;
-    //private final JToolBar mainToolbar;
-    //Button newButton, openButton, saveButton, clearButton, quickButton, aboutMeButton, aboutButton, closeButton;
+    private boolean insert = false;
     private final Action selectAllAction;
-
-
-
-    // setup icons - File Menu
-    private final ImageIcon newIcon = new ImageIcon("icons/new.png");
-    private final ImageIcon openIcon = new ImageIcon("icons/open.png");
-    private final ImageIcon saveIcon = new ImageIcon("icons/save.png");
-    private final ImageIcon closeIcon = new ImageIcon("icons/close.png");
-
-    // setup icons - Edit Menu
-    private final ImageIcon clearIcon = new ImageIcon("icons/clear.png");
-    private final ImageIcon cutIcon = new ImageIcon("icons/cut.png");
-    private final ImageIcon copyIcon = new ImageIcon("icons/copy.png");
-    private final ImageIcon pasteIcon = new ImageIcon("icons/paste.png");
-    private final ImageIcon selectAllIcon = new ImageIcon("icons/selectall.png");
-
-    // setup icons - Search Menu
-    private final ImageIcon searchIcon = new ImageIcon("icons/search.png");
-
-    // setup icons - Help Menu
-    private final ImageIcon aboutMeIcon = new ImageIcon("icons/about_me.png");
-    private final ImageIcon aboutIcon = new ImageIcon("icons/about.png");
-
     AutoComplete autocomplete;
     private boolean hasListener = false;
-
 
     public UI()
     {
@@ -121,14 +75,14 @@ public class UI extends JFrame implements ActionListener {
         //Font Settings menu
 
         // Set the Items Menu
-        newFile = new JMenuItem("New", newIcon);
-        openFile = new JMenuItem("Open", openIcon);
-        saveFile = new JMenuItem("Save", saveIcon);
-        close = new JMenuItem("Quit", closeIcon);
-        clearFile = new JMenuItem("Clear", clearIcon);
-        quickFind = new JMenuItem("Quick", searchIcon);
-        aboutMe = new JMenuItem("About Me", aboutMeIcon);
-        aboutSoftware = new JMenuItem("About Software", aboutIcon);
+        newFile = new JMenuItem("New");
+        openFile = new JMenuItem("Open");
+        saveFile = new JMenuItem("Save");
+        close = new JMenuItem("Quit");
+        clearFile = new JMenuItem("Clear");
+        quickFind = new JMenuItem("Quick");
+        aboutMe = new JMenuItem("About Me");
+        aboutSoftware = new JMenuItem("About Software");
 
 
         menuBar = new JMenuBar();
@@ -167,7 +121,7 @@ public class UI extends JFrame implements ActionListener {
         getContentPane().setVisible(true);
 
         // Set Actions:
-        selectAllAction = new SelectAllAction("Select All", clearIcon, "Select all text", new Integer(KeyEvent.VK_A),textArea);
+        selectAllAction = new SelectAllAction("Select All", "Select all text", new Integer(KeyEvent.VK_A),textArea);
         this.setJMenuBar(menuBar);
 
         // New File
@@ -201,7 +155,6 @@ public class UI extends JFrame implements ActionListener {
         // Select All Text
         selectAll = new JMenuItem(selectAllAction);
         selectAll.setText("Select All");
-        selectAll.setIcon(selectAllIcon);
         selectAll.setToolTipText("Select All");
         selectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
         menuEdit.add(selectAll);
@@ -214,7 +167,6 @@ public class UI extends JFrame implements ActionListener {
         // Cut Text
         cut = new JMenuItem(new DefaultEditorKit.CutAction());
         cut.setText("Cut");
-        cut.setIcon(cutIcon);
         cut.setToolTipText("Cut");
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
         menuEdit.add(cut);
@@ -244,7 +196,6 @@ public class UI extends JFrame implements ActionListener {
         // Copy Text
         copy = new JMenuItem(new DefaultEditorKit.CopyAction());
         copy.setText("Copy");
-        copy.setIcon(copyIcon);
         copy.setToolTipText("Copy");
         copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
         menuEdit.add(copy);
@@ -252,7 +203,6 @@ public class UI extends JFrame implements ActionListener {
         // Paste Text
         paste = new JMenuItem(new DefaultEditorKit.PasteAction());
         paste.setText("Paste");
-        paste.setIcon(pasteIcon);
         paste.setToolTipText("Paste");
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
         menuEdit.add(paste);
@@ -342,6 +292,14 @@ public class UI extends JFrame implements ActionListener {
                 }
         });
         //FONT SIZE SETTINGS SECTION END
+        this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"),
+                "pressed");
+        component.getInputMap().put(KeyStroke.getKeyStroke("released SPACE"),
+                "released");
+        component.getActionMap().put("pressed",
+                 pressedAction);
+        component.getActionMap().put("released",
+                 releasedAction);
     }
 
 
@@ -470,6 +428,7 @@ public class UI extends JFrame implements ActionListener {
         else if (e.getSource() == aboutSoftware) {
             new About().software();
         }
+        
 
     }
 
@@ -479,8 +438,8 @@ public class UI extends JFrame implements ActionListener {
          */
         private static final long serialVersionUID = 1L;
 
-        public SelectAllAction(String text, ImageIcon icon, String desc, Integer mnemonic, final JTextArea textArea) {
-            super(text, icon);
+        public SelectAllAction(String text, String desc, Integer mnemonic, final JTextArea textArea) {
+            super(text);
             putValue(SHORT_DESCRIPTION, desc);
             putValue(MNEMONIC_KEY, mnemonic);
         }
