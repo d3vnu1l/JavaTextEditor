@@ -35,14 +35,11 @@ import javax.swing.text.BadLocationException;
  * @author Patrick Slagle
  * @since 2016-12-03
  */
-public class AutoComplete
-        implements DocumentListener {
+public class AutoComplete implements DocumentListener {
 
     private ArrayList<String> brackets = new ArrayList<>();
     private ArrayList<String> bracketCompletions = new ArrayList<>();
-
     private ArrayList<String> words = new ArrayList<>();
-
     SupportedKeywords kw;
 
     //Keep track of when code completion

@@ -29,7 +29,8 @@ public class UI extends JFrame implements ActionListener {
     private boolean insert = false;
     private final Action selectAllAction;
     AutoComplete autocomplete;
-    private boolean hasListener = false;
+    AutoCorrect autocorrect;
+    private boolean hasAutoCompleteListener = false, hasAutoCorrectListener = false;
 
     public UI()
     {
@@ -292,14 +293,12 @@ public class UI extends JFrame implements ActionListener {
                 }
         });
         //FONT SIZE SETTINGS SECTION END
-        this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"),
-                "pressed");
-        component.getInputMap().put(KeyStroke.getKeyStroke("released SPACE"),
-                "released");
-        component.getActionMap().put("pressed",
-                 pressedAction);
-        component.getActionMap().put("released",
-                 releasedAction);
+        
+        // KEYMAP
+        //this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "pressed");
+        //component.getInputMap().put(KeyStroke.getKeyStroke("released SPACE"), "released");
+        //component.getActionMap().put("pressed", pressedAction);
+        //component.getActionMap().put("released", releasedAction);
     }
 
 
@@ -369,9 +368,13 @@ public class UI extends JFrame implements ActionListener {
                     //If the user saves files with supported
                     //file types more than once, we need to remove
                     //previous listeners to avoid bugs.
-                    if(hasListener) {
+                    if(hasAutoCompleteListener) {
                         textArea.getDocument().removeDocumentListener(autocomplete);
-                        hasListener = false;
+                        hasAutoCompleteListener = false;
+                    }
+                    if(hasAutoCorrectListener) {
+                        textArea.getDocument().removeDocumentListener(autocorrect);
+                        hasAutoCorrectListener = false;
                     }
 
                     //With the keywords located in a separate class,
@@ -379,7 +382,7 @@ public class UI extends JFrame implements ActionListener {
                     //much to add new ones.
                     SupportedKeywords kw = new SupportedKeywords();
                     ArrayList<String> arrayList;
-                    String[] list = { ".java", ".cpp" };
+                    String[] list = { ".java", ".cpp", ".txt" };
 
                     //Iterate through the list, find the supported
                     //file extension, apply the appropriate getter method from
@@ -392,15 +395,21 @@ public class UI extends JFrame implements ActionListener {
                                     arrayList = kw.setKeywords(jk);
                                     autocomplete = new AutoComplete(this, arrayList);
                                     textArea.getDocument().addDocumentListener(autocomplete);
-                                    hasListener = true;
+                                    hasAutoCompleteListener = true;
                                     break;
                                 case 1:
                                     String[] ck = kw.getCppKeywords();
                                     arrayList = kw.setKeywords(ck);
                                     autocomplete = new AutoComplete(this, arrayList);
                                     textArea.getDocument().addDocumentListener(autocomplete);
-                                    hasListener = true;
+                                    hasAutoCompleteListener = true;
                                     break;
+                                case 2:
+                                	autocorrect = new AutoCorrect(this);
+                                    textArea.getDocument().addDocumentListener(autocorrect);
+                                    hasAutoCorrectListener = true;
+                                    break;
+                                	
                             }
                         }
                     }
