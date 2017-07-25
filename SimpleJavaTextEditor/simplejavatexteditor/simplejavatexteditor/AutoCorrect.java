@@ -30,14 +30,14 @@ public class AutoCorrect implements DocumentListener{
 	private String content;
 	private String[] wordsArray;
 	private Highlighter highlighter;
-	private HighlightPainter painter;
+	private HighlightPainter painterCyan;
 	
 	public AutoCorrect(UI ui) {
         //Access the editor
         this.ui = ui;
         textArea = ui.getEditor();
         highlighter = textArea.getHighlighter();
-        painter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
+        painterCyan = new DefaultHighlighter.DefaultHighlightPainter(Color.cyan);
         //Set the handler for the enter key
         //InputMap im = textArea.getInputMap();
         //ActionMap am = textArea.getActionMap();
@@ -110,17 +110,15 @@ public class AutoCorrect implements DocumentListener{
     private class HighlightTask implements Runnable{
     	
     	private final int start, end;
-    	//private final Color color;
     	public HighlightTask(int start, int end){
     		this.start = start;
     		this.end = end;
-    		//this.color = color;
     	}
     	
         @Override
         public void run() {
         	try{
-        		highlighter.addHighlight(start, end, painter );
+        		highlighter.addHighlight(start, end, painterCyan);
         	} catch (BadLocationException ex) {
                 ex.printStackTrace();
             }

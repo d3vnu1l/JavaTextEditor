@@ -24,13 +24,16 @@ public class UI extends JFrame implements ActionListener {
     private final JMenuBar menuBar;
     private final JComboBox fontSize, fontType;
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
-    private final JMenuItem newFile, openFile, saveFile, close, cut, copy, paste, clearFile, selectAll, quickFind,
+    private final JMenuItem newFile, openFile, saveFile, saveFileAs, close, cut, copy, paste, clearFile, selectAll, quickFind,
             aboutMe, aboutSoftware, appearenceSettings, lightMode, darkMode;
+    private final JLabel filenameLabel;
     private boolean insert = false;
     private final Action selectAllAction;
+    private final JPanel statusPanel;
     AutoComplete autocomplete;
     AutoCorrect autocorrect;
     private boolean hasAutoCompleteListener = false, hasAutoCorrectListener = false;
+    private String currentFileName, currentAbsoluteName;
 
     public UI()
     {
@@ -38,9 +41,13 @@ public class UI extends JFrame implements ActionListener {
 
         // Set the initial size of the window
         setSize(700, 500);
+        
+        //Set file name
+        currentFileName = "Untitled";
+        currentAbsoluteName = "";
 
         // Set the title of the window
-        setTitle("Untitled | " + SimpleJavaTextEditor.NAME);
+        setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
 
         // Set the default close operation (exit when it gets closed)
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -79,6 +86,7 @@ public class UI extends JFrame implements ActionListener {
         newFile = new JMenuItem("New");
         openFile = new JMenuItem("Open");
         saveFile = new JMenuItem("Save");
+        saveFileAs = new JMenuItem("Save As");
         close = new JMenuItem("Quit");
         clearFile = new JMenuItem("Clear");
         quickFind = new JMenuItem("Quick");
@@ -94,7 +102,7 @@ public class UI extends JFrame implements ActionListener {
         this.setJMenuBar(menuBar);
         
 
-        JPanel statusPanel = new JPanel();
+        statusPanel = new JPanel();
         statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         getContentPane().add(statusPanel, BorderLayout.SOUTH);
         statusPanel.setPreferredSize(new Dimension(getContentPane().getWidth(), 19));
@@ -103,7 +111,7 @@ public class UI extends JFrame implements ActionListener {
         // Create box and populate entries
         Box statusBox = Box.createHorizontalBox();
         JLabel inputStatusLabel = new JLabel("--Insert--");
-        JLabel filenameLabel = new JLabel("Filename");
+        filenameLabel = new JLabel("Untitled");
         JLabel sourceTypeLabel = new JLabel("Plaintext Mode");
         JLabel cursorPosLabel = new JLabel("X,Y");
         JLabel scrolledPercentLabel = new JLabel("50%");
@@ -120,7 +128,7 @@ public class UI extends JFrame implements ActionListener {
         statusBox.add(scrolledPercentLabel);
         statusPanel.add(statusBox);
         getContentPane().setVisible(true);
-
+        
         // Set Actions:
         selectAllAction = new SelectAllAction("Select All", "Select all text", new Integer(KeyEvent.VK_A),textArea);
         this.setJMenuBar(menuBar);
@@ -139,6 +147,11 @@ public class UI extends JFrame implements ActionListener {
         saveFile.addActionListener(this);
         saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
         menuFile.add(saveFile);
+        
+        // Save File As
+        saveFileAs.addActionListener(this);
+        saveFileAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK));
+        menuFile.add(saveFileAs);
 
         // Close File
         /*
@@ -336,6 +349,12 @@ public class UI extends JFrame implements ActionListener {
                     while (scan.hasNext()) // while there's still something to
                                             // read
                         textArea.append(scan.nextLine() + "\n"); // append the line to the TextArea
+                    
+                    // Update info for file name
+                    currentFileName = open.getSelectedFile().getName();
+                    System.out.println(System.getProperty("user.dir"));
+                    fileChangeUpdate();
+                    
                 } catch (Exception ex) { // catch any exceptions, and...
                     // ...write to the debug console
                     System.out.println(ex.getMessage());
@@ -343,9 +362,10 @@ public class UI extends JFrame implements ActionListener {
             }
         }
         // If the source of the event was the "save" option
-        else if (e.getSource() == saveFile) {
+        else if (e.getSource() == saveFileAs) {
             // Open a file chooser
             JFileChooser fileChoose = new JFileChooser();
+            fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             // Open the file, only this time we call
             int option = fileChoose.showSaveDialog(this);
 
@@ -357,7 +377,8 @@ public class UI extends JFrame implements ActionListener {
                 try {
                     File file = fileChoose.getSelectedFile();
                     // Set the new title of the window
-                    setTitle(file.getName() + " | " + SimpleJavaTextEditor.NAME);
+                    //setTitle(file.getName() + " | " + SimpleJavaTextEditor.NAME);
+                    
                     // Create a buffered writer to write to a file
                     BufferedWriter out = new BufferedWriter(new FileWriter(file.getPath()));
                     // Write the contents of the TextArea to the file
@@ -382,7 +403,7 @@ public class UI extends JFrame implements ActionListener {
                     //much to add new ones.
                     SupportedKeywords kw = new SupportedKeywords();
                     ArrayList<String> arrayList;
-                    String[] list = { ".java", ".cpp", ".txt" };
+                    String[] list = { ".java", ".cpp", ".txt" };      
 
                     //Iterate through the list, find the supported
                     //file extension, apply the appropriate getter method from
@@ -413,6 +434,13 @@ public class UI extends JFrame implements ActionListener {
                             }
                         }
                     }
+                    
+                    // Update file name in status bar
+                    currentFileName = file.getName();
+                    currentAbsoluteName = file.getAbsolutePath();
+                    System.out.println(currentAbsoluteName);
+                    fileChangeUpdate();
+                    //System.out.println(file.getName());
                 } catch (Exception ex) { // again, catch any exceptions and...
                     // ...write to the debug console
                     System.out.println(ex.getMessage());
@@ -420,6 +448,12 @@ public class UI extends JFrame implements ActionListener {
             }
         }
 
+        // Save As
+        else if (e.getSource() == saveFile) {
+        	System.out.println(currentFileName);
+        	System.out.println(System.getProperty("user.dir"));
+        }
+        
         // Clear File (Code)
         if (e.getSource() == clearFile) {
             FEdit.clear(textArea);
@@ -438,10 +472,10 @@ public class UI extends JFrame implements ActionListener {
             new About().software();
         }
         
-
     }
 
     class SelectAllAction extends AbstractAction {
+
         /**
          * Used for Select All function
          */
@@ -456,5 +490,13 @@ public class UI extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             textArea.selectAll();
         }
+    }
+    
+    private void fileChangeUpdate(){
+        // Update file name in status bar
+        this.filenameLabel.setText(currentFileName);
+        
+        //update name on top bar
+        setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
     }
 }
