@@ -13,8 +13,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.border.BevelBorder;
+
 
 public class UI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
@@ -26,14 +29,16 @@ public class UI extends JFrame implements ActionListener {
     private final JMenu menuFile, menuEdit, menuFind, menuAbout;
     private final JMenuItem newFile, openFile, saveFile, saveFileAs, close, cut, copy, paste, clearFile, selectAll, quickFind,
             aboutMe, aboutSoftware, appearenceSettings, lightMode, darkMode;
-    private final JLabel filenameLabel;
+    private final JLabel filenameLabel, sourceTypeLabel, cursorPosLabel, scrolledPercentLabel, inputStatusLabel;
     private boolean insert = false;
     private final Action selectAllAction;
     private final JPanel statusPanel;
     AutoComplete autocomplete;
     AutoCorrect autocorrect;
+    CaretTools carettools;
     private boolean hasAutoCompleteListener = false, hasAutoCorrectListener = false;
     private String currentFileName, currentAbsoluteName;
+    
 
     public UI()
     {
@@ -59,6 +64,10 @@ public class UI extends JFrame implements ActionListener {
         textArea.setFont(new Font("Century Gothic", Font.BOLD, 12));
         textArea.setTabSize(2);
      
+        //CaretTools
+        carettools = new CaretTools(this);
+        textArea.addCaretListener(carettools);
+        
         // Set up scroll bar
         scrolll = new JScrollPane(textArea);
         scrolll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -66,9 +75,8 @@ public class UI extends JFrame implements ActionListener {
         scrolll.setMinimumSize(new Dimension(10, 10));
         
         
-        
         /* SETTING BY DEFAULT WORD WRAP ENABLED OR TRUE */
-        textArea.setLineWrap(true);
+        textArea.setLineWrap(false);
 
         // This is why we didn't have to worry about the size of the TextArea!
         getContentPane().setLayout(new BorderLayout()); // the BorderLayout bit makes it fill it automatically
@@ -110,11 +118,11 @@ public class UI extends JFrame implements ActionListener {
        
         // Create box and populate entries
         Box statusBox = Box.createHorizontalBox();
-        JLabel inputStatusLabel = new JLabel("--Insert--");
+        inputStatusLabel = new JLabel("--Insert--");
         filenameLabel = new JLabel("Untitled");
-        JLabel sourceTypeLabel = new JLabel("Plaintext Mode");
-        JLabel cursorPosLabel = new JLabel("X,Y");
-        JLabel scrolledPercentLabel = new JLabel("50%");
+        sourceTypeLabel = new JLabel("Plaintext Mode");
+        cursorPosLabel = new JLabel("0,0");
+        scrolledPercentLabel = new JLabel("0%");
         
         // Add entries and set visible
         statusBox.add(inputStatusLabel);
@@ -150,7 +158,7 @@ public class UI extends JFrame implements ActionListener {
         
         // Save File As
         saveFileAs.addActionListener(this);
-        saveFileAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK));
+        //saveFileAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK));
         menuFile.add(saveFileAs);
 
         // Close File
@@ -184,28 +192,6 @@ public class UI extends JFrame implements ActionListener {
         cut.setToolTipText("Cut");
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
         menuEdit.add(cut);
-
-
-        /* CODE FOR WORD WRAP OPERATION
-         * BY DEFAULT WORD WRAPPING IS **DISABLED**.
-        */
-        textArea.setLineWrap(false);
-        /*
-        wordWrap.addActionListener(new ActionListener()
-        {
-                public void actionPerformed(ActionEvent ev) {
-                    // If wrapping is false then after clicking on menuitem the word wrapping will be enabled
-                    if(textArea.getLineWrap()==false) {
-                         // Setting word wrapping to true 
-                        textArea.setLineWrap(true);
-                    } else {
-                        // else  if wrapping is true then after clicking on menuitem the word wrapping will be disabled
-                        //  Setting word wrapping to false 
-                    	textArea.setLineWrap(false);
-                }
-            }
-        });
-        */
 
         // Copy Text
         copy = new JMenuItem(new DefaultEditorKit.CopyAction());
@@ -365,7 +351,7 @@ public class UI extends JFrame implements ActionListener {
         else if (e.getSource() == saveFileAs) {
             // Open a file chooser
             JFileChooser fileChoose = new JFileChooser();
-            fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            //fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             // Open the file, only this time we call
             int option = fileChoose.showSaveDialog(this);
 
@@ -412,6 +398,7 @@ public class UI extends JFrame implements ActionListener {
                         if(file.getName().endsWith(list[i])) {
                             switch(i) {
                                 case 0:
+                                	//Autocomplete listener
                                     String[] jk = kw.getJavaKeywords();
                                     arrayList = kw.setKeywords(jk);
                                     autocomplete = new AutoComplete(this, arrayList);
@@ -419,6 +406,7 @@ public class UI extends JFrame implements ActionListener {
                                     hasAutoCompleteListener = true;
                                     break;
                                 case 1:
+                                	//Autocomplete listener
                                     String[] ck = kw.getCppKeywords();
                                     arrayList = kw.setKeywords(ck);
                                     autocomplete = new AutoComplete(this, arrayList);
@@ -426,6 +414,7 @@ public class UI extends JFrame implements ActionListener {
                                     hasAutoCompleteListener = true;
                                     break;
                                 case 2:
+                                	//AutoCorrect listener
                                 	autocorrect = new AutoCorrect(this);
                                     textArea.getDocument().addDocumentListener(autocorrect);
                                     hasAutoCorrectListener = true;
@@ -499,4 +488,13 @@ public class UI extends JFrame implements ActionListener {
         //update name on top bar
         setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
     }
+    
+    public void setCaretStatusLabel(Point cPos){
+    	cursorPosLabel.setText(cPos.x + "," + cPos.y);
+    }
+    
+    public void setPercentageStatusLabel(int per){
+    	scrolledPercentLabel.setText(per + "%");
+    }
+    
 }

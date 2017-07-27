@@ -22,6 +22,11 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Point;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.Utilities;
 
 public class AutoCorrect implements DocumentListener{
 	private final UI ui;
@@ -125,10 +130,6 @@ public class AutoCorrect implements DocumentListener{
         }
     }
 	
-    public int getWords(){
-    	return 0;
-    }
-	
     @Override
     public void removeUpdate(DocumentEvent e) {
     }
@@ -137,4 +138,5 @@ public class AutoCorrect implements DocumentListener{
     public void changedUpdate(DocumentEvent e) {
     	
     }
+    
 }
