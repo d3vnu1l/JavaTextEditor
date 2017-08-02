@@ -1,7 +1,6 @@
 package simplejavatexteditor;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -37,7 +37,8 @@ public class UI extends JFrame implements ActionListener {
     AutoCorrect autocorrect;
     CaretTools carettools;
     private boolean hasAutoCompleteListener = false, hasAutoCorrectListener = false;
-    private String currentFileName, currentAbsoluteName;
+    private String currentFileName, currentPathName, currentExtension;
+    private File file;
     
 
     public UI()
@@ -49,7 +50,8 @@ public class UI extends JFrame implements ActionListener {
         
         //Set file name
         currentFileName = "Untitled";
-        currentAbsoluteName = "";
+        currentPathName = "";
+        currentExtension = "";
 
         // Set the title of the window
         setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
@@ -94,6 +96,7 @@ public class UI extends JFrame implements ActionListener {
         newFile = new JMenuItem("New");
         openFile = new JMenuItem("Open");
         saveFile = new JMenuItem("Save");
+        saveFile.setEnabled(false);
         saveFileAs = new JMenuItem("Save As");
         close = new JMenuItem("Quit");
         clearFile = new JMenuItem("Clear");
@@ -210,10 +213,12 @@ public class UI extends JFrame implements ActionListener {
         //Font Text
         appearenceSettings = new JMenu("Appearence");
         //fontSettings.setMnemonic(KeyEvent.VK_S);
+        
         lightMode = new JMenuItem("Light");
-        //size.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
-        appearenceSettings.add(lightMode);
+        lightMode.addActionListener(this);
         darkMode = new JMenuItem("Dark");
+        darkMode.addActionListener(this);
+        appearenceSettings.add(lightMode);
         appearenceSettings.add(darkMode);
         menuEdit.add(appearenceSettings);
         
@@ -339,6 +344,8 @@ public class UI extends JFrame implements ActionListener {
                     // Update info for file name
                     currentFileName = open.getSelectedFile().getName();
                     System.out.println(System.getProperty("user.dir"));
+                    file = open.getSelectedFile();
+                    saveFile.setEnabled(true);
                     fileChangeUpdate();
                     
                 } catch (Exception ex) { // catch any exceptions, and...
@@ -351,7 +358,6 @@ public class UI extends JFrame implements ActionListener {
         else if (e.getSource() == saveFileAs) {
             // Open a file chooser
             JFileChooser fileChoose = new JFileChooser();
-            //fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             // Open the file, only this time we call
             int option = fileChoose.showSaveDialog(this);
 
@@ -361,7 +367,7 @@ public class UI extends JFrame implements ActionListener {
              */
             if (option == JFileChooser.APPROVE_OPTION) {
                 try {
-                    File file = fileChoose.getSelectedFile();
+                    file = fileChoose.getSelectedFile();
                     // Set the new title of the window
                     //setTitle(file.getName() + " | " + SimpleJavaTextEditor.NAME);
                     
@@ -426,8 +432,13 @@ public class UI extends JFrame implements ActionListener {
                     
                     // Update file name in status bar
                     currentFileName = file.getName();
-                    currentAbsoluteName = file.getAbsolutePath();
-                    System.out.println(currentAbsoluteName);
+                    currentPathName = file.getPath();
+                    System.out.println(currentPathName);
+                    int i = currentFileName.lastIndexOf('.');
+                    if (i > 0) {
+                        currentExtension = currentFileName.substring(i+1);
+                    }
+                    saveFile.setEnabled(true);
                     fileChangeUpdate();
                     //System.out.println(file.getName());
                 } catch (Exception ex) { // again, catch any exceptions and...
@@ -440,12 +451,30 @@ public class UI extends JFrame implements ActionListener {
         // Save As
         else if (e.getSource() == saveFile) {
         	System.out.println(currentFileName);
-        	System.out.println(System.getProperty("user.dir"));
+        	System.out.println(currentPathName);
+        	
+        	try {
+				BufferedWriter out = new BufferedWriter(new FileWriter(file.getPath()));
+	        	out.write(textArea.getText());
+	        	out.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
         }
         
         // Clear File (Code)
         if (e.getSource() == clearFile) {
             FEdit.clear(textArea);
+        }
+        // Light mode
+        if (e.getSource() == lightMode) {
+            setLight();
+        }
+        // Dark mode
+        if (e.getSource() == darkMode) {
+            setDark();
         }
         // Find
         if (e.getSource() == quickFind) {
@@ -484,7 +513,10 @@ public class UI extends JFrame implements ActionListener {
     private void fileChangeUpdate(){
         // Update file name in status bar
         this.filenameLabel.setText(currentFileName);
-        
+        if(currentExtension.equals("txt"))
+        	this.sourceTypeLabel.setText("PlainText Mode");
+        else if(currentExtension.equals("cpp"))
+        	this.sourceTypeLabel.setText("CPP Mode");
         //update name on top bar
         setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
     }
@@ -497,4 +529,13 @@ public class UI extends JFrame implements ActionListener {
     	scrolledPercentLabel.setText(per + "%");
     }
     
+    private void setDark(){
+    	textArea.setBackground(Color.BLACK);
+    	textArea.setForeground(Color.WHITE);
+    }
+    
+    private void setLight(){
+    	textArea.setBackground(Color.WHITE);
+    	textArea.setForeground(Color.BLACK);
+    }
 }
