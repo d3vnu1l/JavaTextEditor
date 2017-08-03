@@ -37,7 +37,7 @@ public class UI extends JFrame implements ActionListener {
     AutoCorrect autocorrect;
     CaretTools carettools;
     private boolean hasAutoCompleteListener = false, hasAutoCorrectListener = false;
-    private String currentFileName, currentPathName, currentExtension;
+    private String currentFileName, currentExtension;
     private File file;
     private String[] list = { ".java", ".cpp", ".txt" };  
     
@@ -51,7 +51,6 @@ public class UI extends JFrame implements ActionListener {
         
         //Set file name
         currentFileName = "Untitled";
-        currentPathName = "";
         currentExtension = "";
 
         // Set the title of the window
@@ -334,7 +333,7 @@ public class UI extends JFrame implements ActionListener {
              * the file
              */
             if (option == JFileChooser.APPROVE_OPTION) {
-                FEdit.clear(textArea); // clear the TextArea before applying the file contents
+                FEdit.clear(textArea); // clear the TextArea before applying the file contentssetListeners
                 
                 try {
                     // create a scanner to read the file (getSelectedFile().getPath() will get the path to the file)
@@ -392,8 +391,7 @@ public class UI extends JFrame implements ActionListener {
                     
                     // Update file name in status bar
                     currentFileName = file.getName();
-                    currentPathName = file.getPath();
-                    System.out.println(currentPathName);
+                    
                     int i = currentFileName.lastIndexOf('.');
                     if (i > 0) {
                         currentExtension = currentFileName.substring(i+1);
@@ -410,8 +408,6 @@ public class UI extends JFrame implements ActionListener {
 
         // Save As
         else if (e.getSource() == saveFile) {
-        	System.out.println(currentFileName);
-        	System.out.println(currentPathName);
         	
         	try {
 				BufferedWriter out = new BufferedWriter(new FileWriter(file.getPath()));
@@ -473,10 +469,15 @@ public class UI extends JFrame implements ActionListener {
     private void fileChangeUpdate(){
         // Update file name in status bar
         this.filenameLabel.setText(currentFileName);
-        if(currentExtension.equals("txt"))
+        
+        System.out.println(currentExtension);
+        
+        if(currentExtension.equals("txt")) {
         	this.sourceTypeLabel.setText("PlainText Mode");
-        else if(currentExtension.equals("cpp"));
+        }
+        else if(currentExtension.equals("cpp")) {
         	this.sourceTypeLabel.setText("CPP Mode");
+        }
     }
     
     public void setCaretStatusLabel(Point cPos){
