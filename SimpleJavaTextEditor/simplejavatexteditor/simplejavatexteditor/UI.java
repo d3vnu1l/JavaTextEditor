@@ -39,6 +39,7 @@ public class UI extends JFrame implements ActionListener {
     private boolean hasAutoCompleteListener = false, hasAutoCorrectListener = false;
     private String currentFileName, currentPathName, currentExtension;
     private File file;
+    private String[] list = { ".java", ".cpp", ".txt" };  
     
 
     public UI()
@@ -54,7 +55,7 @@ public class UI extends JFrame implements ActionListener {
         currentExtension = "";
 
         // Set the title of the window
-        setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
+        setTitle(SimpleJavaTextEditor.NAME);
 
         // Set the default close operation (exit when it gets closed)
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -123,7 +124,7 @@ public class UI extends JFrame implements ActionListener {
         Box statusBox = Box.createHorizontalBox();
         inputStatusLabel = new JLabel("--Insert--");
         filenameLabel = new JLabel("Untitled");
-        sourceTypeLabel = new JLabel("Plaintext Mode");
+        sourceTypeLabel = new JLabel("No Mode");
         cursorPosLabel = new JLabel("0,0");
         scrolledPercentLabel = new JLabel("0%");
         
@@ -334,17 +335,25 @@ public class UI extends JFrame implements ActionListener {
              */
             if (option == JFileChooser.APPROVE_OPTION) {
                 FEdit.clear(textArea); // clear the TextArea before applying the file contents
+                
                 try {
                     // create a scanner to read the file (getSelectedFile().getPath() will get the path to the file)
                     Scanner scan = new Scanner(new FileReader(open.getSelectedFile().getPath()));
                     while (scan.hasNext()) // while there's still something to
                                             // read
                         textArea.append(scan.nextLine() + "\n"); // append the line to the TextArea
+                    file = open.getSelectedFile();
+                    
+                    //set appropriate listeners.
+                    setListeners();
                     
                     // Update info for file name
                     currentFileName = open.getSelectedFile().getName();
+                    int i = currentFileName.lastIndexOf('.');
+                    if (i > 0) {
+                        currentExtension = currentFileName.substring(i+1);
+                    }
                     System.out.println(System.getProperty("user.dir"));
-                    file = open.getSelectedFile();
                     saveFile.setEnabled(true);
                     fileChangeUpdate();
                     
@@ -378,57 +387,8 @@ public class UI extends JFrame implements ActionListener {
                     // Close the file stream
                     out.close();
 
-                    //If the user saves files with supported
-                    //file types more than once, we need to remove
-                    //previous listeners to avoid bugs.
-                    if(hasAutoCompleteListener) {
-                        textArea.getDocument().removeDocumentListener(autocomplete);
-                        hasAutoCompleteListener = false;
-                    }
-                    if(hasAutoCorrectListener) {
-                        textArea.getDocument().removeDocumentListener(autocorrect);
-                        hasAutoCorrectListener = false;
-                    }
-
-                    //With the keywords located in a separate class,
-                    //we can support multiple languages and not have to do
-                    //much to add new ones.
-                    SupportedKeywords kw = new SupportedKeywords();
-                    ArrayList<String> arrayList;
-                    String[] list = { ".java", ".cpp", ".txt" };      
-
-                    //Iterate through the list, find the supported
-                    //file extension, apply the appropriate getter method from
-                    //the keyword class
-                    for(int i = 0; i < list.length; i++) {
-                        if(file.getName().endsWith(list[i])) {
-                            switch(i) {
-                                case 0:
-                                	//Autocomplete listener
-                                    String[] jk = kw.getJavaKeywords();
-                                    arrayList = kw.setKeywords(jk);
-                                    autocomplete = new AutoComplete(this, arrayList);
-                                    textArea.getDocument().addDocumentListener(autocomplete);
-                                    hasAutoCompleteListener = true;
-                                    break;
-                                case 1:
-                                	//Autocomplete listener
-                                    String[] ck = kw.getCppKeywords();
-                                    arrayList = kw.setKeywords(ck);
-                                    autocomplete = new AutoComplete(this, arrayList);
-                                    textArea.getDocument().addDocumentListener(autocomplete);
-                                    hasAutoCompleteListener = true;
-                                    break;
-                                case 2:
-                                	//AutoCorrect listener
-                                	autocorrect = new AutoCorrect(this);
-                                    textArea.getDocument().addDocumentListener(autocorrect);
-                                    hasAutoCorrectListener = true;
-                                    break;
-                                	
-                            }
-                        }
-                    }
+                    //set appropriate listeners
+                    setListeners();
                     
                     // Update file name in status bar
                     currentFileName = file.getName();
@@ -515,10 +475,8 @@ public class UI extends JFrame implements ActionListener {
         this.filenameLabel.setText(currentFileName);
         if(currentExtension.equals("txt"))
         	this.sourceTypeLabel.setText("PlainText Mode");
-        else if(currentExtension.equals("cpp"))
+        else if(currentExtension.equals("cpp"));
         	this.sourceTypeLabel.setText("CPP Mode");
-        //update name on top bar
-        setTitle(currentFileName + " | " + SimpleJavaTextEditor.NAME);
     }
     
     public void setCaretStatusLabel(Point cPos){
@@ -537,5 +495,54 @@ public class UI extends JFrame implements ActionListener {
     private void setLight(){
     	textArea.setBackground(Color.WHITE);
     	textArea.setForeground(Color.BLACK);
+    }
+    
+    private void setListeners() {
+        //remove previous listeners to avoid bugs.
+        if(hasAutoCompleteListener) {
+            textArea.getDocument().removeDocumentListener(autocomplete);
+            hasAutoCompleteListener = false;
+        }
+        if(hasAutoCorrectListener) {
+            textArea.getDocument().removeDocumentListener(autocorrect);
+            hasAutoCorrectListener = false;
+        }
+        
+        //With the keywords located in a separate class,
+        //we can support multiple languages and not have to do
+        //much to add new ones.
+        SupportedKeywords kw = new SupportedKeywords();
+        ArrayList<String> arrayList;   
+        
+        //set appropriate listeners
+        for(int i = 0; i < list.length; i++) {
+            if(file.getName().endsWith(list[i])) {
+                switch(i) {
+                    case 0:
+                    	//Autocomplete listener
+                        String[] jk = kw.getJavaKeywords();
+                        arrayList = kw.setKeywords(jk);
+                        autocomplete = new AutoComplete(this, arrayList);
+                        textArea.getDocument().addDocumentListener(autocomplete);
+                        hasAutoCompleteListener = true;
+                        break;
+                    case 1:
+                    	//Autocomplete listener
+                        String[] ck = kw.getCppKeywords();
+                        arrayList = kw.setKeywords(ck);
+                        autocomplete = new AutoComplete(this, arrayList);
+                        textArea.getDocument().addDocumentListener(autocomplete);
+                        hasAutoCompleteListener = true;
+                        break;
+                    case 2:
+                    	//AutoCorrect listener
+                    	autocorrect = new AutoCorrect(this);
+                        textArea.getDocument().addDocumentListener(autocorrect);
+                        hasAutoCorrectListener = true;
+                        break;
+                    	
+                }
+            }
+        }
     }
 }

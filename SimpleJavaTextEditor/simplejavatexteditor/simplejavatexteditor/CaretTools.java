@@ -55,7 +55,7 @@ public class CaretTools implements CaretListener {
 	    	
 	    	//update UI
 	    	ui.setCaretStatusLabel(cPos);
-	    	ui.setPercentageStatusLabel((int)(100*cPos.y/(1.0*textArea.getLineCount())));
+	    	ui.setPercentageStatusLabel((int)(100.0*cPos.y/(1.0*textArea.getLineCount())));
 	    }
     }
 }
