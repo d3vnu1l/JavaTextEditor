@@ -1,4 +1,4 @@
-Simple Java Text Editor, a fork of https://github.com/pH-7/Simple-Java-Text-Editor
+Simple Java Text Editor, a fork of https://github.com/pH-7/Simple-Java-Text-Editor  
   Modified to include;  
     *autocorrect  
     *better layout, less clutter  
