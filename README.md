@@ -1,5 +1,5 @@
 Simple Java Text Editor, a fork of https://github.com/pH-7/Simple-Java-Text-Editor
-
+*autocorrect
   Modified to include;
     *autocorrect
     *better layout, less clutter
