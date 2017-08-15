@@ -3,11 +3,16 @@ package simplejavatexteditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.Scanner;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -36,6 +41,7 @@ public class AutoCorrect implements DocumentListener{
 	private String[] wordsArray;
 	private Highlighter highlighter;
 	private HighlightPainter painterCyan;
+	private Map<String, Integer> map;
 	
 	public AutoCorrect(UI ui) {
         //Access the editor
@@ -43,12 +49,64 @@ public class AutoCorrect implements DocumentListener{
         textArea = ui.getEditor();
         highlighter = textArea.getHighlighter();
         painterCyan = new DefaultHighlighter.DefaultHighlightPainter(Color.cyan);
+        getWordCounts();
         //Set the handler for the enter key
         //InputMap im = textArea.getInputMap();
         //ActionMap am = textArea.getActionMap();
         //im.put(KeyStroke.getKeyStroke("ENTER "), COMMIT_ACTION);
         //am.put(COMMIT_ACTION, new CommitAction());
     }
+	
+	private void getWordCounts() {
+		ArrayList<String> words = new ArrayList<String>();
+		
+		//add ALL words to a list
+		File file = new File("corpus");
+	    try {
+	        Scanner sc = new Scanner(file);
+	        
+	        while (sc.hasNextLine()) {
+	            String line = sc.nextLine();
+	           
+	            Pattern p = Pattern.compile("\\b[\\w']+\\b");
+	            Matcher m = p.matcher(line);
+	            //generate word list
+	            while ( m.find() ) {
+	                words.add(line.substring(m.start(), m.end()).toLowerCase());
+	            }
+	        }
+	        sc.close();
+	        
+	        //generate frequency map
+	        this.map = new HashMap<>();
+	        for (int i=0; i < words.size(); i++) {
+	            Integer n = map.get(words.get(i));
+	            n = (n == null) ? 1 : ++n;
+	            map.put(words.get(i), n);
+	        }
+	        
+	    } 
+	    catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    
+	}
+	
+	//search for 1 edit fixes
+	private int editDistance(String word) {
+		//delete any character
+		
+		//add any character
+		
+		//rotate any two adjacent characters
+		
+		//swap any one character
+		
+		
+		
+		return -1;
+	}
 	
 	/**
      * A character has been typed into the document.
@@ -79,6 +137,10 @@ public class AutoCorrect implements DocumentListener{
         
         //keep an array of entered words
         wordsArray = textArea.getText().split("\\s+");
+
+        System.out.println("Word : " + wordsArray[wordsArray.length-1] + ", stats: " + map.get(wordsArray[wordsArray.length-1]));
+        
+        //check dupes
         checkDouble();
     }
     
