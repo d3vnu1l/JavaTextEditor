@@ -95,9 +95,22 @@ public class AutoCorrect implements DocumentListener{
 	
 	//search for 1 edit fixes
 	private int editDistance(String word) {
+		int length = word.length();
+		StringBuilder sb;
+		
 		//delete any character
+		for(int i=0; i<length; i++) {
+			sb = new StringBuilder(word);
+			sb.deleteCharAt(i);
+			System.out.println(sb.toString());
+		}
 		
 		//add any character
+		for(int i=0; i<length+1; i++) {
+			sb = new StringBuilder(word);
+			sb.insert(i, 'c');
+			System.out.println(sb.toString());
+		}
 		
 		//rotate any two adjacent characters
 		
@@ -139,6 +152,7 @@ public class AutoCorrect implements DocumentListener{
         wordsArray = textArea.getText().split("\\s+");
 
         System.out.println("Word : " + wordsArray[wordsArray.length-1] + ", stats: " + map.get(wordsArray[wordsArray.length-1]));
+        editDistance(wordsArray[wordsArray.length-1]);
         
         //check dupes
         checkDouble();
