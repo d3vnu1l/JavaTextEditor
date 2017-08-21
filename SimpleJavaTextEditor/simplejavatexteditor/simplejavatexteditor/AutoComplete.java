@@ -70,7 +70,7 @@ public class AutoComplete implements DocumentListener {
         //Set the handler for the enter key
         InputMap im = textArea.getInputMap();
         ActionMap am = textArea.getActionMap();
-        im.put(KeyStroke.getKeyStroke("ENTER "), COMMIT_ACTION);
+        im.put(KeyStroke.getKeyStroke("ENTEReditDistance(wordsArray[wordsArray.length-1]) "), COMMIT_ACTION);
         am.put(COMMIT_ACTION, new CommitAction());
 
         Collections.sort(words);
@@ -176,6 +176,7 @@ public class AutoComplete implements DocumentListener {
      * generated when the user is typing a
      * word that matches a keyword.
      */
+    
     private class CompletionTask
             implements Runnable {
 

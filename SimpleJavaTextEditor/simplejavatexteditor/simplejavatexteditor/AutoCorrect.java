@@ -50,11 +50,6 @@ public class AutoCorrect implements DocumentListener{
         highlighter = textArea.getHighlighter();
         painterCyan = new DefaultHighlighter.DefaultHighlightPainter(Color.cyan);
         getWordCounts();
-        //Set the handler for the enter key
-        //InputMap im = textArea.getInputMap();
-        //ActionMap am = textArea.getActionMap();
-        //im.put(KeyStroke.getKeyStroke("ENTER "), COMMIT_ACTION);
-        //am.put(COMMIT_ACTION, new CommitAction());
     }
 	
 	private void getWordCounts() {
@@ -94,31 +89,72 @@ public class AutoCorrect implements DocumentListener{
 	}
 	
 	//search for 1 edit fixes
-	private int editDistance(String word) {
+	private String editDistance(String word) {
 		int length = word.length();
 		StringBuilder sb;
+		String[] replacements = new String[1024];
+		int[] likeliness = new int[1024];
+		int index = 0;
 		
 		//delete any character
 		for(int i=0; i<length; i++) {
 			sb = new StringBuilder(word);
 			sb.deleteCharAt(i);
-			System.out.println(sb.toString());
+			if(map.get(sb.toString())!=null) {
+				replacements[index] = sb.toString();
+				likeliness[index++] = map.get(sb.toString());
+			}
+			//System.out.println(sb.toString());
 		}
 		
 		//add any character
 		for(int i=0; i<length+1; i++) {
 			sb = new StringBuilder(word);
 			sb.insert(i, 'c');
-			System.out.println(sb.toString());
+			if(map.get(sb.toString())!=null) {
+				replacements[index] = sb.toString();
+				likeliness[index++] = map.get(sb.toString());
+			}
+			//System.out.println(sb.toString());
 		}
 		
 		//rotate any two adjacent characters
+		for(int i=0; i<length-1; i++) {
+			sb = new StringBuilder(word);
+			char tmp = sb.charAt(i);
+			sb.setCharAt(i, sb.charAt(i+1));
+			sb.setCharAt(i+1, tmp);
+			if(map.get(sb.toString())!=null) {
+				replacements[index] = sb.toString();
+				likeliness[index++] = map.get(sb.toString());
+			}
+			//System.out.println(sb.toString());
+		}
 		
 		//swap any one character
+		for(int i=0; i<length; i++) {
+			sb = new StringBuilder(word);
+			for(char a = 'a'; a <= 'z'; a++) {
+				sb.setCharAt(i, a);
+				if(map.get(sb.toString())!=null) {
+					replacements[index] = sb.toString();
+					likeliness[index++] = map.get(sb.toString());
+				}
+				//System.out.println(sb.toString());
+			}
+		}
 		
+		String substitute = new String();
+		int odds = 0;
+		while(index-->0) {
+			System.out.println(replacements[index] + ", " + likeliness[index]);
+			if(likeliness[index]>=odds) {
+				substitute = replacements[index];
+				odds = likeliness[index];
+			}
+		}
 		
-		
-		return -1;
+		return substitute;
 	}
 	
 	/**
@@ -131,7 +167,6 @@ public class AutoCorrect implements DocumentListener{
     @Override
     public void insertUpdate(DocumentEvent e) {
     	pos = e.getOffset();
-    	
     	try {
             content = textArea.getText(0, pos + 1);
         } catch (BadLocationException ex) {
@@ -151,8 +186,19 @@ public class AutoCorrect implements DocumentListener{
         //keep an array of entered words
         wordsArray = textArea.getText().split("\\s+");
 
-        System.out.println("Word : " + wordsArray[wordsArray.length-1] + ", stats: " + map.get(wordsArray[wordsArray.length-1]));
-        editDistance(wordsArray[wordsArray.length-1]);
+        //run autocorrect
+        if(map.get(wordsArray[wordsArray.length-1])==null) {
+        	System.out.println("incorrect word detected");
+        	if(editDistance(wordsArray[wordsArray.length-1])==null)
+        		System.out.println("no replacement found");
+        	else {
+        		System.out.println("Choose: " + editDistance(wordsArray[wordsArray.length-1]));
+        		int start = pos-e.getLength()-2;
+        		int end = start + editDistance(wordsArray[wordsArray.length-1]).length();
+        		System.out.println(start + ", " + end);
+        		SwingUtilities.invokeLater(new ReplaceTask(editDistance(wordsArray[wordsArray.length-1]), start, end));
+        	}
+        }
         
         //check dupes
         checkDouble();
@@ -175,7 +221,6 @@ public class AutoCorrect implements DocumentListener{
             String lastlastWord = wordsArray[i].replaceAll("[^a-zA-Z]", "").toLowerCase();;
 	        if(lastWord.equals(lastlastWord)){
 	            String wordToFind = wordsArray[i] + " " +  wordsArray[i + 1];
-	            System.out.println(wordToFind);
 	            try{
 	            	Pattern word = Pattern.compile(wordToFind);
 	            	Matcher match = word.matcher(content);
@@ -186,6 +231,25 @@ public class AutoCorrect implements DocumentListener{
 	            }
 	        }
         }     
+    }
+    
+    private class ReplaceTask implements Runnable{
+    	private final String completion;
+    	private final int position, end;
+    	
+    	public ReplaceTask(String completion, int position, int end){
+            this.completion = completion;
+            this.position = position;
+            this.end = end;
+        }
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			textArea.replaceRange("", position, end);
+			textArea.insert(completion, position);
+            //textArea.setCaretPosition(end+1);
+		}
+    	
     }
     
     private class HighlightTask implements Runnable{
