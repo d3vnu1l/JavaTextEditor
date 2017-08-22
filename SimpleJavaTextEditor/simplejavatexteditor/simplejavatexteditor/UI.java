@@ -491,11 +491,13 @@ public class UI extends JFrame implements ActionListener {
     private void setDark(){
     	textArea.setBackground(Color.BLACK);
     	textArea.setForeground(Color.WHITE);
+    	textArea.setCaretColor(Color.WHITE);
     }
     
     private void setLight(){
     	textArea.setBackground(Color.WHITE);
     	textArea.setForeground(Color.BLACK);
+    	textArea.setCaretColor(Color.BLACK);
     }
     
     private void setListeners() {

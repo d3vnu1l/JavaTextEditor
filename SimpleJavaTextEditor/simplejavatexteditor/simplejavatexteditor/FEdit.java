@@ -26,5 +26,4 @@ public class FEdit {
         textArea.setText("");
     }
 
-
 }

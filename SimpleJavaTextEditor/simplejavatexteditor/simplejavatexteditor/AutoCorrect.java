@@ -147,14 +147,14 @@ public class AutoCorrect implements DocumentListener{
 		String substitute = new String();
 		int odds = 0;
 		while(index-->0) {
-			System.out.println(replacements[index] + ", " + likeliness[index]);
+			//System.out.println(replacements[index] + ", " + likeliness[index]);
 			if(likeliness[index]>=odds) {
 				substitute = replacements[index];
 				odds = likeliness[index];
 			}
 		}
-		
-		return substitute;
+		if(odds == 0) return null;
+		else return substitute;
 	}
 	
 	/**
@@ -187,32 +187,27 @@ public class AutoCorrect implements DocumentListener{
         wordsArray = textArea.getText().split("\\s+");
 
         //run autocorrect
-        if(map.get(wordsArray[wordsArray.length-1])==null) {
+        String word = wordsArray[wordsArray.length-1].toLowerCase();
+        String replace = editDistance(word);
+        if(map.get(word)==null) {
         	System.out.println("incorrect word detected");
-        	if(editDistance(wordsArray[wordsArray.length-1])==null)
+        	if(editDistance(word)==null)
         		System.out.println("no replacement found");
         	else {
-        		System.out.println("Choose: " + editDistance(wordsArray[wordsArray.length-1]));
-        		int start = pos-e.getLength()-2;
-        		int end = start + editDistance(wordsArray[wordsArray.length-1]).length();
+        		System.out.println("Choose: " + replace);
+        		int start = pos-word.length();
+        		int end = start + word.length();
         		System.out.println(start + ", " + end);
-        		SwingUtilities.invokeLater(new ReplaceTask(editDistance(wordsArray[wordsArray.length-1]), start, end));
+        		SwingUtilities.invokeLater(new ReplaceTask(replace, start, end));
         	}
         }
         
         //check dupes
-        checkDouble();
+        checkDouble((pos - word.length()));
     }
     
-    private void checkDouble(){
-        //Get the beginning of the last word typed
-        int start;
-        for (start = (pos-1); start >= 0; start--) {
-            if (!Character.isLetter(content.charAt(start))) {
-                break;
-            }
-        }
-        
+    private void checkDouble(int start){
+        //skip of no 2 words
         if(wordsArray.length<2)
         	return;
         
