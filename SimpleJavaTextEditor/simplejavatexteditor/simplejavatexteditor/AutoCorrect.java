@@ -109,13 +109,16 @@ public class AutoCorrect implements DocumentListener{
 		
 		//add any character
 		for(int i=0; i<length+1; i++) {
-			sb = new StringBuilder(word);
-			sb.insert(i, 'c');
-			if(map.get(sb.toString())!=null) {
-				replacements[index] = sb.toString();
-				likeliness[index++] = map.get(sb.toString());
+			for(char a = 'a'; a <= 'z'; a++) {
+				sb = new StringBuilder(word);
+				sb.insert(i, a);
+				
+				if(map.get(sb.toString())!=null) {
+					replacements[index] = sb.toString();
+					likeliness[index++] = map.get(sb.toString());
+				}
+				//System.out.println(sb.toString());
 			}
-			//System.out.println(sb.toString());
 		}
 		
 		//rotate any two adjacent characters
@@ -212,11 +215,13 @@ public class AutoCorrect implements DocumentListener{
         	return;
         
         for(int i=0; i<(wordsArray.length-1); i++){
+        	//strip non alphabetic characters
         	String lastWord = wordsArray[i + 1].replaceAll("[^a-zA-Z]", "").toLowerCase();;
             String lastlastWord = wordsArray[i].replaceAll("[^a-zA-Z]", "").toLowerCase();;
 	        if(lastWord.equals(lastlastWord)){
-	            String wordToFind = wordsArray[i] + " " +  wordsArray[i + 1];
+	            String wordToFind = " " + wordsArray[i] + " " +  wordsArray[i + 1];
 	            try{
+	            	//search for exact duplicate block for highlighting
 	            	Pattern word = Pattern.compile(wordToFind);
 	            	Matcher match = word.matcher(content);
 		        	if(match.find())
