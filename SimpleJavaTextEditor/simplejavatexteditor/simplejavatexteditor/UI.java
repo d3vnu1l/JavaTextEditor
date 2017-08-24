@@ -352,7 +352,6 @@ public class UI extends JFrame implements ActionListener {
                     if (i > 0) {
                         currentExtension = currentFileName.substring(i+1);
                     }
-                    System.out.println(System.getProperty("user.dir"));
                     saveFile.setEnabled(true);
                     fileChangeUpdate();
                     
@@ -398,7 +397,6 @@ public class UI extends JFrame implements ActionListener {
                     }
                     saveFile.setEnabled(true);
                     fileChangeUpdate();
-                    //System.out.println(file.getName());
                 } catch (Exception ex) { // again, catch any exceptions and...
                     // ...write to the debug console
                     System.out.println(ex.getMessage());
@@ -469,9 +467,7 @@ public class UI extends JFrame implements ActionListener {
     private void fileChangeUpdate(){
         // Update file name in status bar
         this.filenameLabel.setText(currentFileName);
-        
-        System.out.println(currentExtension);
-        
+
         if(currentExtension.equals("txt")) {
         	this.sourceTypeLabel.setText("PlainText Mode");
         }

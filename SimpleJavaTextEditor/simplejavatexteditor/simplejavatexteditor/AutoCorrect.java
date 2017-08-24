@@ -104,7 +104,6 @@ public class AutoCorrect implements DocumentListener{
 				replacements[index] = sb.toString();
 				likeliness[index++] = map.get(sb.toString());
 			}
-			//System.out.println(sb.toString());
 		}
 		
 		//add any character
@@ -117,7 +116,6 @@ public class AutoCorrect implements DocumentListener{
 					replacements[index] = sb.toString();
 					likeliness[index++] = map.get(sb.toString());
 				}
-				//System.out.println(sb.toString());
 			}
 		}
 		
@@ -131,7 +129,6 @@ public class AutoCorrect implements DocumentListener{
 				replacements[index] = sb.toString();
 				likeliness[index++] = map.get(sb.toString());
 			}
-			//System.out.println(sb.toString());
 		}
 		
 		//swap any one character
@@ -143,7 +140,6 @@ public class AutoCorrect implements DocumentListener{
 					replacements[index] = sb.toString();
 					likeliness[index++] = map.get(sb.toString());
 				}
-				//System.out.println(sb.toString());
 			}
 		}
 		
